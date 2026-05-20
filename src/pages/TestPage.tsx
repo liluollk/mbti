@@ -139,6 +139,11 @@ const TestPage: React.FC = () => {
         <div className="text-center text-gray-400 text-xs mt-2">
           MBTI 人格测试 · 第 {currentIndex + 1}/{questions.length} 题
         </div>
+
+        {/* 仅供参考提示 */}
+        <div className="text-center text-gray-300 text-xs mt-1">
+          ⚠️ 测试结果仅供娱乐参考
+        </div>
       </div>
 
       <Toast message={toast.message} visible={toast.visible} />
