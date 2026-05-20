@@ -21,52 +21,52 @@ export interface Question {
 export const questions: Question[] = [
   {
     id: 1,
-    text: "在社交聚会中，你通常会：",
+    text: "我喜欢和很多人一起参加社交活动，这能让我感到精力充沛。",
     category: "EI",
   },
   {
     id: 2,
-    text: "当你独自一人时，你会感到：",
+    text: "当我需要思考重要事情时，我更喜欢一个人独处。",
     category: "EI",
   },
   {
     id: 3,
-    text: "你更喜欢的工作方式是：",
+    text: "与人交谈是我获取新想法和能量的主要方式。",
     category: "EI",
   },
   {
     id: 4,
-    text: "在解决问题时，你更倾向于：",
+    text: "我更相信可以通过五官感知到的具体事实和数据。",
     category: "SN",
   },
   {
     id: 5,
-    text: "你更关注：",
+    text: "我更关注事物的可能性和未来的发展趋势。",
     category: "SN",
   },
   {
     id: 6,
-    text: "你更喜欢：",
+    text: "学习新知识时，我更倾向于先了解具体的细节和实例。",
     category: "SN",
   },
   {
     id: 7,
-    text: "在做决定时，你更看重：",
+    text: "做决定时，我更看重逻辑分析和客观事实。",
     category: "TF",
   },
   {
     id: 8,
-    text: "当与他人发生分歧时，你通常会：",
+    text: "当与他人发生分歧时，我会优先考虑对方的感受和关系和谐。",
     category: "TF",
   },
   {
     id: 9,
-    text: "你认为公正和仁慈哪个更重要：",
+    text: "我认为公正和原则比个人感情更重要。",
     category: "TF",
   },
   {
     id: 10,
-    text: "你更喜欢有计划的生活还是随遇而安：",
+    text: "我更喜欢有计划、有规律的生活方式。",
     category: "JP",
   },
 ];
