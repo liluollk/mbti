@@ -1,0 +1,11 @@
+{
+  "$schema": "https://zeabur.com/schema.json",
+  "build": {
+    "command": "npm run build",
+    "output": "dist"
+  },
+  "dev": {
+    "command": "npm run dev"
+  },
+  "env": {}
+}
