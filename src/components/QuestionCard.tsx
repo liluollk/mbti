@@ -3,11 +3,10 @@ import { Question } from '../data/questions';
 
 interface QuestionCardProps {
   question: Question;
-  selectedAnswer: number | null; // 当前选中的答案（0-4）
-  onAnswer: (answer: number) => void; // 选择答案时的回调
+  selectedAnswer: number | null;
+  onAnswer: (answer: number) => void;
 }
 
-// 选项配置
 const options = [
   { value: 0, label: '非常不同意' },
   { value: 1, label: '不同意' },
@@ -16,54 +15,46 @@ const options = [
   { value: 4, label: '非常同意' },
 ];
 
-// 题目卡片组件
 const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   selectedAnswer,
   onAnswer,
 }) => {
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      {/* 题目容器 */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 animate-fadeIn">
-        {/* 题目文本 */}
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-10 leading-relaxed">
+    <div className="w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <h2 className="text-lg font-semibold text-gray-800 text-center leading-relaxed mb-4">
           {question.text}
         </h2>
 
-        {/* 选项列表 */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           {options.map((option) => (
             <button
               key={option.value}
               onClick={() => onAnswer(option.value)}
               className={`
-                w-full p-4 md:p-6 rounded-xl text-left transition-all duration-300
+                w-full p-3 rounded-lg text-left transition-all duration-200
                 ${selectedAnswer === option.value
-                  ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg transform scale-[1.02]'
-                  : 'bg-gray-50 hover:bg-gray-100 text-gray-700 hover:shadow-md'
+                  ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-md'
+                  : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
                 }
-                font-medium text-lg
-                btn-hover
+                font-medium text-base flex items-center
               `}
             >
-              <div className="flex items-center">
-                {/* 圆形指示器 */}
-                <div
-                  className={`
-                    w-6 h-6 rounded-full border-2 mr-4 flex-shrink-0
-                    ${selectedAnswer === option.value
-                      ? 'border-white bg-white'
-                      : 'border-gray-300 bg-white'
-                    }
-                  `}
-                >
-                  {selectedAnswer === option.value && (
-                    <div className="w-full h-full rounded-full bg-primary-600 scale-75" />
-                  )}
-                </div>
-                <span>{option.label}</span>
+              <div
+                className={`
+                  w-5 h-5 rounded-full border-2 mr-3 flex-shrink-0 flex items-center justify-center
+                  ${selectedAnswer === option.value
+                    ? 'border-white'
+                    : 'border-gray-300 bg-white'
+                  }
+                `}
+              >
+                {selectedAnswer === option.value && (
+                  <div className="w-3 h-3 rounded-full bg-white" />
+                )}
               </div>
+              <span>{option.label}</span>
             </button>
           ))}
         </div>
