@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { questions } from '../data/questions';
-import { mbtiDescriptions, MBTIDescription } from '../data/mbtiDescriptions';
+import { mbtiDescriptions, MBTIResult } from '../data/mbtiDescriptions';
 import { calculateMBTI, getDimensionScores, getTendencyStrength } from '../utils/mbtiCalculator';
 import { storage } from '../utils/storage';
 
 interface ResultData {
   mbtiType: string;
-  description: MBTIDescription;
+  description: MBTIResult;
   dimensionScores: ReturnType<typeof getDimensionScores>;
 }
 
@@ -41,9 +41,13 @@ const ResultPage: React.FC = () => {
 
   const handleShare = () => {
     if (result) {
-      const shareText = `我刚刚做了 MBTI 人格测试，结果是 ${result.mbtiType}（${result.description.name}）！你也来试试吧！`;
-      console.log('分享内容:', shareText);
-      alert('分享功能开发中...');
+      const shareText = `我刚刚做了MBTI人格测试，结果是${result.mbtiType}(${result.description.name})！你也来试试吧！`;
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert('分享内容已复制到剪贴板！');
+      }).catch(() => {
+        alert('分享功能开发中...');
+        console.log('分享内容:', shareText);
+      });
     }
   };
 
@@ -60,6 +64,16 @@ const ResultPage: React.FC = () => {
     );
   }
 
+  const getStrengthText = (strength: string): string => {
+    const map: Record<string, string> = {
+      'weak': '微弱',
+      'moderate': '中等',
+      'strong': '明显',
+      'very_strong': '强烈'
+    };
+    return map[strength] || strength;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -71,15 +85,15 @@ const ResultPage: React.FC = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
               {result.description.name}
             </h2>
-            <p className="text-gray-600 text-lg">{result.description.description}</p>
+            <p className="text-gray-600 text-lg">{result.description.tagline}</p>
           </div>
 
           <div className="mb-8">
             <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">维度分析</h3>
             <div className="space-y-4">
               {result.dimensionScores.map((score) => {
-                const leftLetter = score.dimension[1]; // I, N, F, P
-                const rightLetter = score.dimension[0]; // E, S, T, J
+                const leftLetter = score.dimension[1];
+                const rightLetter = score.dimension[0];
                 const total = score.scoreA + score.scoreB;
                 const progress = total > 0 ? (score.scoreA / total) * 100 : 50;
 
@@ -109,6 +123,9 @@ const ResultPage: React.FC = () => {
                       </span>
                       <span className="text-xs text-gray-500">{score.scoreA}分</span>
                     </div>
+                    <div className="text-right mt-1">
+                      <span className="text-xs text-gray-400">强度: {getStrengthText(score.strength)}</span>
+                    </div>
                   </div>
                 );
               })}
@@ -133,7 +150,7 @@ const ResultPage: React.FC = () => {
             </div>
 
             <div className="mb-6">
-              <h4 className="text-lg font-bold text-red-600 mb-3">⚠️ 劣势</h4>
+              <h4 className="text-lg font-bold text-red-600 mb-3">⚠️ 待改进</h4>
               <div className="flex flex-wrap gap-2">
                 {result.description.weaknesses.map((weakness, index) => (
                   <span
@@ -148,9 +165,9 @@ const ResultPage: React.FC = () => {
           </div>
 
           <div className="mb-8">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">适合职业</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">💼 适合职业</h3>
             <div className="flex flex-wrap gap-2">
-              {result.description.careers.map((career, index) => (
+              {result.description.career.suitable.map((career, index) => (
                 <span
                   key={index}
                   className="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium"
@@ -161,9 +178,98 @@ const ResultPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-purple-50 rounded-xl p-6 mb-8">
-            <h3 className="text-xl font-bold text-purple-700 mb-3">💜 人际关系</h3>
-            <p className="text-gray-700 leading-relaxed">{result.description.relationships}</p>
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">🧠 认知功能</h3>
+            <div className="space-y-3">
+              {result.description.cognitiveFunctions.map((func, index) => (
+                <div key={index} className="bg-gray-50 rounded-xl p-4">
+                  <div className="font-bold text-gray-800 mb-1">{func.name}</div>
+                  <div className="text-gray-600 text-sm">{func.description}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">💕 恋爱关系分析</h3>
+
+            <div className="bg-pink-50 rounded-xl p-6 mb-4">
+              <h4 className="font-bold text-pink-700 mb-2">恋爱风格</h4>
+              <p className="text-gray-700">{result.description.relationship.loveStyle}</p>
+            </div>
+
+            <div className="bg-purple-50 rounded-xl p-6 mb-4">
+              <h4 className="font-bold text-purple-700 mb-2">理想伴侣</h4>
+              <p className="text-gray-700">{result.description.relationship.idealPartner}</p>
+            </div>
+
+            <div className="bg-indigo-50 rounded-xl p-6">
+              <h4 className="font-bold text-indigo-700 mb-3">沟通特点</h4>
+              <p className="text-gray-700">{result.description.relationship.communication}</p>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">💑 恋爱指南</h3>
+
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-6 mb-4">
+              <h4 className="font-bold text-gray-800 mb-2">恋爱特点</h4>
+              <p className="text-gray-700">{result.description.dating.overview}</p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-6 mb-4">
+              <h4 className="font-bold text-gray-800 mb-2">💕 最佳匹配</h4>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {result.description.dating.compatibility.map((type, index) => (
+                  <span
+                    key={index}
+                    className="bg-pink-100 text-pink-700 px-4 py-2 rounded-full text-sm font-medium"
+                  >
+                    {type}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-orange-50 rounded-xl p-6">
+              <h4 className="font-bold text-orange-700 mb-3">💡 恋爱建议</h4>
+              <ul className="space-y-2">
+                {result.description.dating.tips.map((tip, index) => (
+                  <li key={index} className="text-gray-700 flex items-start">
+                    <span className="mr-2">✓</span>
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">🌱 个人成长</h3>
+
+            <div className="bg-green-50 rounded-xl p-6 mb-4">
+              <h4 className="font-bold text-green-700 mb-3">成长方向</h4>
+              <ul className="space-y-2">
+                {result.description.growth.growthAreas.map((area, index) => (
+                  <li key={index} className="text-gray-700 flex items-start">
+                    <span className="mr-2">🌱</span>
+                    {area}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-yellow-50 rounded-xl p-6">
+              <h4 className="font-bold text-yellow-700 mb-3">压力应对</h4>
+              <ul className="space-y-2">
+                {result.description.growth.stressResponse.map((response, index) => (
+                  <li key={index} className="text-gray-700 flex items-start">
+                    <span className="mr-2">⚠️</span>
+                    {response}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">

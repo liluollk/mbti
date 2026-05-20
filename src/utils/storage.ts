@@ -1,62 +1,65 @@
-// localStorage 工具函数
-// 用于管理用户测试进度和付费状态
+// Storage utilities for local storage
 
-// 存储键名
 const STORAGE_KEYS = {
-  PAID: 'mbti_paid', // 付费状态
-  ANSWERS: 'mbti_answers', // 用户答案
-  CURRENT_INDEX: 'mbti_current_index', // 当前题目索引
+  PAID: 'mbti_paid',
+  ANSWERS: 'mbti_answers',
+  CURRENT_INDEX: 'mbti_current_index',
 };
 
-// 付费状态管理
 export const storage = {
-  // 检查用户是否已付费
-  isPaid: (): boolean => {
-    const paid = localStorage.getItem(STORAGE_KEYS.PAID);
-    return paid === 'true';
+  // Paid status
+  isPaid(): boolean {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.PAID) === 'true';
+    } catch {
+      return false;
+    }
   },
 
-  // 设置付费状态
-  setPaid: (paid: boolean): void => {
-    localStorage.setItem(STORAGE_KEYS.PAID, paid.toString());
+  setPaid(value: boolean): void {
+    localStorage.setItem(STORAGE_KEYS.PAID, String(value));
   },
 
-  // 清除付费状态（用于重置测试）
-  clearPaid: (): void => {
-    localStorage.removeItem(STORAGE_KEYS.PAID);
+  // Answers
+  getAnswers(): number[] {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.ANSWERS);
+      if (!saved) return [];
+      const answers = JSON.parse(saved);
+      return Array.isArray(answers) ? answers : [];
+    } catch {
+      return [];
+    }
   },
 
-  // 获取用户答案
-  getAnswers: (): number[] => {
-    const answers = localStorage.getItem(STORAGE_KEYS.ANSWERS);
-    return answers ? JSON.parse(answers) : [];
-  },
-
-  // 保存用户答案
-  setAnswers: (answers: number[]): void => {
+  setAnswers(answers: number[]): void {
     localStorage.setItem(STORAGE_KEYS.ANSWERS, JSON.stringify(answers));
   },
 
-  // 获取当前题目索引
-  getCurrentIndex: (): number => {
-    const index = localStorage.getItem(STORAGE_KEYS.CURRENT_INDEX);
-    return index ? parseInt(index, 10) : 0;
+  // Current index
+  getCurrentIndex(): number {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_INDEX);
+      if (!saved) return 0;
+      const index = parseInt(saved, 10);
+      return isNaN(index) ? 0 : index;
+    } catch {
+      return 0;
+    }
   },
 
-  // 设置当前题目索引
-  setCurrentIndex: (index: number): void => {
-    localStorage.setItem(STORAGE_KEYS.CURRENT_INDEX, index.toString());
+  setCurrentIndex(index: number): void {
+    localStorage.setItem(STORAGE_KEYS.CURRENT_INDEX, String(index));
   },
 
-  // 清除测试进度（用于重新测试）
-  clearProgress: (): void => {
+  // Clear progress
+  clearProgress(): void {
     localStorage.removeItem(STORAGE_KEYS.ANSWERS);
     localStorage.removeItem(STORAGE_KEYS.CURRENT_INDEX);
   },
 
-  // 重置所有数据
-  resetAll: (): void => {
-    storage.clearPaid();
-    storage.clearProgress();
-  },
+  // Clear all
+  clearAll(): void {
+    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+  }
 };
